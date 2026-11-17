@@ -22,6 +22,8 @@ FARS (the Fatality Analysis Reporting System) does not store the state crash ID.
 2. **Get the FARS data.** Download the national CSV file for each year you need, for example `FARS2022NationalCSV.zip`, from the [NHTSA FARS download page](https://www.nhtsa.gov/file-downloads?p=nhtsa/downloads/FARS/), and put them in one folder. Do not unzip them.
 3. **Double-click `RUN_ME.bat`.** A window opens. Pick your crash file, check the columns the tool guessed, pick the FARS folder, and press **Run**. You can also drag your crash file onto `RUN_ME.bat`.
 
+![The tool window](docs/img/window.png)
+
 The window asks four things:
 
 | Box | What to do |
@@ -311,6 +313,7 @@ tests/test_match.py    a small synthetic test (python -m pytest tests)
 requirements.txt       packages for pip
 environment.yml        the same for conda
 LICENSE                MIT license
+docs/img/              figures used in this README
 ```
 
 No crash data or FARS data are stored in this repository. Download FARS yourself from NHTSA.
