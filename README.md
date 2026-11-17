@@ -33,7 +33,7 @@ The window asks four things:
 
 Keep "Pedestrian deaths only" ticked if your file holds pedestrian deaths: the tool then matches only to FARS cases in which a pedestrian died, which rules out a nearby crash of another kind on the same day. Untick it for any other kind of fatal crash.
 
-About 13,500 crashes in five states take less than a minute on a laptop.
+A file of about 12,500 crashes in five states takes less than a minute on a laptop.
 
 ## Other ways to run it
 
@@ -68,7 +68,7 @@ print(out[["FARS_ST_CASE", "MATCH_RULE", "CHECK"]].head())
 
 Step 1 needs coordinates. Step 2 needs at least two of county, time and the victim's age and sex. A file with coordinates only still gets Step 1; a file without coordinates can still be matched by Step 2.
 
-**The victim must be the person who died.** If your crash file stores one "pedestrian" per crash, check that it is the pedestrian who was killed and not the first pedestrian or the second unit in the crash. A wrong victim does not create wrong matches in Step 1, but it makes the check report conflicts and makes Step 2 miss crashes.
+**The victim must be the person who died.** If your crash file keeps one person per crash, make sure it is the person who was killed, not simply the first person or unit listed. A wrong victim does not create wrong matches in Step 1, but it makes the check report conflicts and makes Step 2 miss crashes.
 
 ## What you get
 
@@ -91,7 +91,7 @@ Your crash file comes back with these columns added on the right:
 | `1B_ONLY_CASE_UNDER_1KM` | Nearest FARS case on the same day, less than 1 km away, and no other FARS case within 1 km |
 | `2_COUNTY_TIME_VICTIM` | The only FARS case on the same day that agrees on county, time and victim |
 | `NO_MATCH` | No FARS case passed either rule |
-| `NO_MATCH_YEAR_NOT_IN_FARS` | No FARS file for that year in the folder (for example, the newest year is not released yet) |
+| `NO_MATCH_YEAR_NOT_IN_FARS` | The FARS folder has no file for the crash's year |
 | `NO_MATCH_MISSING_STATE_OR_DATE` | The row has no usable state or date |
 
 A second sheet, `Summary`, counts the rows by state and rule, and by rule and check.
@@ -251,20 +251,20 @@ mark crashes whose match is shared with another crash
 
 ## How well it works
 
-We tested the tool on a file of 13,529 fatal pedestrian crashes from Alabama, Georgia, Michigan, Ohio and Texas (2015 to 2025), against the FARS national files for 2015 to 2024. For Texas we added the crash time, the county and the killed pedestrian's age and sex from the full Texas crash database (CRIS, 2017 to 2025). CRIS is confidential; only summary numbers are reported here.
+We tested the tool on 12,492 fatal pedestrian crashes from the crash databases of Alabama, Georgia, Michigan, Ohio and Texas (2015 to 2024), against the FARS national files for the same years. The state files carry few of the fields the check needs (only Michigan's has a crash time), so for Texas we added the crash time, the county and the killed pedestrian's age and sex from the full Texas crash database (CRIS, 2017 to 2024). CRIS is confidential; only summary numbers are reported here.
 
 **How many crashes matched.**
 
-| State | 1A | 1B | 2 | No match | 2025 (FARS not released) | Total |
+| State | 1A | 1B | 2 | No match | Total | Matched |
 |---|---|---|---|---|---|---|
-| Alabama | 628 | 142 | 0 | 141 | 96 | 1,007 |
-| Georgia | 2,013 | 206 | 0 | 267 | 252 | 2,738 |
-| Michigan | 1,249 | 19 | 0 | 128 | 0 | 1,396 |
-| Ohio | 1,101 | 96 | 0 | 89 | 0 | 1,286 |
-| Texas | 5,719 | 377 | 94 | 223 | 689 | 7,102 |
-| **Total** | **10,710** | **840** | **94** | **848** | **1,037** | **13,529** |
+| Alabama | 628 | 142 | 0 | 141 | 911 | 84.5% |
+| Georgia | 2,013 | 206 | 0 | 267 | 2,486 | 89.3% |
+| Michigan | 1,249 | 19 | 0 | 128 | 1,396 | 90.8% |
+| Ohio | 1,101 | 96 | 0 | 89 | 1,286 | 93.1% |
+| Texas | 5,719 | 377 | 94 | 223 | 6,413 | 96.5% |
+| **Total** | **10,710** | **840** | **94** | **848** | **12,492** | **93.2%** |
 
-Of the 12,492 crashes in years FARS covers, 11,644 (93.2%) matched. 137 of the unmatched crashes have no usable coordinates and nothing else to match on (Michigan 82, Alabama 49 with coordinates of -1/-1, Georgia 3, Texas 3).
+137 of the unmatched crashes have no usable coordinates and nothing else to match on (Michigan 82, Alabama 49 with coordinates of -1/-1, Georgia 3, Texas 3).
 
 **Are the matches right?** Step 1 uses only the date and the location, so time, county and victim are an independent test of it.
 
@@ -293,10 +293,10 @@ When Step 2 gives an answer, it is the same answer as Step 1 99.98% of the time.
 
 ## Limits
 
-- **New years.** FARS is released about a year and a half after the crash year. Crashes from years not yet in FARS cannot be matched.
+- **Only the FARS years in your folder are searched.** Put a FARS file in the folder for every crash year in your file.
 - **No coordinates and no other fields.** A crash without coordinates needs at least two of county, time and victim for Step 2.
 - **Border counties.** A crash on a county line can be in one county in the crash file and the next county in FARS. Step 2 then misses it (about 10 in 5,467 in the Texas test).
-- **Wrong victim in the crash file.** If the crash file's victim is not the person killed (for example, the second unit of every crash), the check reports false conflicts and Step 2 misses crashes. Check your victim fields first.
+- **Wrong victim in the crash file.** If the crash file's victim is not the person killed, the check reports false conflicts and Step 2 misses crashes. Check your victim fields first.
 - **Crashes stored twice.** Two rows of your file can match one FARS case. They are marked, not removed: only you can tell which row to keep.
 - **Several victims.** The victim test passes if any of the FARS case's victims agrees.
 - **Rule 1B is a little weaker than 1A** (98.3% against 99.5% confirmed in Texas). Filter on `MATCH_RULE` if you need the strictest set.
