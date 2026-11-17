@@ -1,0 +1,9 @@
+name: fars-match
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10
+  - pandas>=2.0
+  - numpy
+  - openpyxl
+  - pytest
